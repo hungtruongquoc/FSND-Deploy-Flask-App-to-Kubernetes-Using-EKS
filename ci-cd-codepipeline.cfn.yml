@@ -32,7 +32,7 @@ Parameters:
     Type: String
     NoEcho: true
     Description: GitHub API token - see https://github.com/blog/1509-personal-api-tokens
-    Default: 591c3c774ed426a7784b2893ab9ec0201d6faeb3
+    Default: Default value
     MinLength: 3
     MaxLength: 100
     ConstraintDescription: You must enter a GitHub personal access token
@@ -100,10 +100,6 @@ Metadata:
         default: EKS cluster name
 
 Resources:
-  GitHubTokenSecret:
-    Type: AWS::SecretsManager::Secret
-    Properties:
-      Name: GitHubOAuthToken
   EcrDockerRepository:
     Type: AWS::ECR::Repository
     DeletionPolicy: Retain
@@ -354,8 +350,8 @@ Resources:
                     "",
                     [
                       "{{resolve:secretsmanager:",
-                      !Ref GitHubTokenSecret,
-                      ":SecretString}}",
+                      "GitHubTokenSecret",
+                      ":SecretString:token}}",
                     ],
                   ]
               OutputArtifacts:
