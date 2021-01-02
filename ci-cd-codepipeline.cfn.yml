@@ -100,6 +100,10 @@ Metadata:
         default: EKS cluster name
 
 Resources:
+  GitHubTokenSecret:
+    Type: AWS::SecretsManager::Secret
+    Properties:
+      Name: GitHubOAuthToken
   EcrDockerRepository:
     Type: AWS::ECR::Repository
     DeletionPolicy: Retain
@@ -345,7 +349,15 @@ Resources:
                 Owner: !Ref GitHubUser
                 Repo: !Ref GitSourceRepo
                 Branch: !Ref GitBranch
-                OAuthToken: !Ref GitHubToken
+                OAuthToken:
+                  !Join [
+                    "",
+                    [
+                      "{{resolve:secretsmanager:",
+                      !Ref GitHubTokenSecret,
+                      ":SecretString}}",
+                    ],
+                  ]
               OutputArtifacts:
                 - Name: App
               RunOrder: 1
